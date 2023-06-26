@@ -244,25 +244,75 @@ sap.ui.define([
 				if (calSlot2.length == !0){	calSlotCount++;} 
 				if (calSlot3.length == !0){	calSlotCount++;}
 			}
+			
+			
 				
 			debugger;
 			// Maximum inspektor selection is 3 setting this value;
 			if(calSlotCount === 3) {
 				oEvent.getSource().removeSelectionInterval((lastAddedIdx),(lastAddedIdx));
-				if (isSameRecord == false){MessageToast.show("Es darf max. 3 Prüfer ausgewählt werden. ( " + obj1 + obj2 + " )" );}
-				else{
-					
-					// delete record from checkedIns if they are same records, uncheck box;
-					for (let i = 0; i < checkedIns.length; i++) {
-	    				if(checkedIns[i].pernr == obj2){
-	    					debugger;
-	    					checkedIns[i].checked = false;
-	    					checkedIns.splice(i,1);
-	    					
-	    				}
+				if (isSameRecord == false){MessageToast.show("Es darf max. 3 Prüfer ausgewählt werden. ( " + obj1 + obj2 + " )" );} 
+				
+			} else {
+				if(isSameRecord == false){
+					// calSlotCount is not max and thats not the same box
+					calSlotCount++;
+					switch(calSlotCount) {
+						case 1:
+						   f1.setVisible(true);
+						   f1Pernr=obj1;
+						   f1Name=obj2;
+						   this.settingsCal1();
+						   var newInsp = {
+					    		name: obj1,
+					    		pernr: obj2,
+					    		checked: true
+						   };
+						   calSlot1.push(newInsp);
+						   break;
+						case 2:
+						   f2.setVisible(true);
+						   f2Pernr=obj1;
+						   f2Name=obj2;
+						   this.settingsCal2();
+						   var newInsp = {
+					    		name: obj1,
+					    		pernr: obj2,
+					    		checked: true
+						   };
+						   calSlot2.push(newInsp);
+						   break;
+						case 3:
+						   f3.setVisible(true);
+						   f3Pernr=obj1;
+						   f3Name=obj2;
+						   this.settingsCal3();
+						   var newInsp = {
+					    		name: obj1,
+					    		pernr: obj2,
+					    		checked: true
+						   };
+						   calSlot3.push(newInsp);
 					}
+				
+				} 
 					
-					//Unassign calanders ; 
+			}	
+				
+			// We are clicking the same box:
+			if(isSameRecord == true){
+				// delete record from checkedIns if they are same records, uncheck box;
+				for (let i = 0; i < checkedIns.length; i++) {
+	    			if(checkedIns[i].pernr == obj2){
+	    				debugger;
+	    				checkedIns[i].checked = false;
+	    				checkedIns.splice(i,1);
+	    					
+	    			}
+				}
+					
+				if(calSlotCount === 3)
+					{//Unassign calanders ; 
 					switch(obj1) {
 						  case f1Pernr:
 						  	f1Pernr=f2Pernr;
@@ -310,127 +360,52 @@ sap.ui.define([
 						  	f3Name="";
 						  	calSlot3 = [];
 					}
+					} else if (calSlotCount === 2){
+						//TODO 2 ve 1 duzeltilecek
+						//Unassign calanders ; 
+							switch(obj1) {
+								  case f1Pernr:
+								  	f1Pernr=f2Pernr;
+								  	f2Pernr=0;
+								  	
+								  	f1Name=f2Name;
+								  	f2Name="";
+								  	
+								  	this.settingsCal1();
+								  	this.settingsCal2();
+								  	
+								    f1.setVisible(true);
+								    f2.setVisible(false);
+		
+								    calSlot1 = [];
+								    calSlot1 = calSlot2;
+								    calSlot2 = [];
+								    
+								    break;
+								  case f2Pernr:
+								  	
+								  	f2Pernr=0;
+									f2Name="";
+									this.settingsCal2();
+									f2.setVisible(false);
+									calSlot2 = [];
+
+							}
+					} else if (calSlotCount === 1){
+						
+						f1Pernr=0;
+						f1Name="";
+						this.settingsCal1();
+						f1.setVisible(false);
+						calSlot1 = [];
+						
+					}
+			}		
 					
-				}
-			} else {
-				calSlotCount++;
-				switch(calSlotCount) {
-					case 1:
-					   f1.setVisible(true);
-					   f1Pernr=obj1;
-					   f1Name=obj2;
-					   this.settingsCal1();
-					   var newInsp = {
-				    		name: obj1,
-				    		pernr: obj2,
-				    		checked: true
-					   };
-					   calSlot1.push(newInsp);
-					   break;
-					case 2:
-					   f2.setVisible(true);
-					   f2Pernr=obj1;
-					   f2Name=obj2;
-					   this.settingsCal2();
-					   var newInsp = {
-				    		name: obj1,
-				    		pernr: obj2,
-				    		checked: true
-					   };
-					   calSlot2.push(newInsp);
-					   break;
-					case 3:
-					   f3.setVisible(true);
-					   f3Pernr=obj1;
-					   f3Name=obj2;
-					   this.settingsCal3();
-					   var newInsp = {
-				    		name: obj1,
-				    		pernr: obj2,
-				    		checked: true
-					   };
-					   calSlot3.push(newInsp);
-						}
-			}
-			
-			
-			// Maximum inspektor selection
-			
+					
 			debugger;
 			
-/*			if(selectedRowCounts.length > 3 && calendarCounts > 2) {
-				MessageToast.show("Es darf max. 3 Prüfer ausgewählt werden. ( " + obj1 + obj2 + " )" );
-				oEvent.getSource().removeSelectionInterval((lastAddedIdx),(lastAddedIdx));
-			}else{
-					// After checkbox clicking, should fill a calendar with clicked values
-					if(calendarCounts<4){
-					if(isSameRecord == false){
-						
-						checkedIns[calendarCounts].checked = true;
-						console.log("If e girdi");
-						switch(calendarCounts) {
-						  case 0:
-						    f1.setVisible(true);
-						    f1Pernr=obj1;
-						    f1Name=obj2;
-						    this.settingsCal1();
-						    break;
-						  case 1:
-						    f2.setVisible(true);
-						    f2Pernr=obj1;
-						    f2Name=obj2;
-						    this.settingsCal2();
-						    break;
-						  case 2:
-						  	f3.setVisible(true);
-						  	f3Pernr=obj1;
-						  	f3Name=obj2;
-						  	this.settingsCal3();
-						}
 
-					calendarCounts++;
-
-					}else{
-					
-					for (let i = 0; i < checkedIns.length; i++) {
-	    				if(checkedIns[i].pernr == obj2){
-	    					debugger;
-	    					checkedIns[i].checked = false;
-	    					checkedIns.splice(i,1);
-	    					
-	    				}
-					}
-					
-					//checkedIns.find(({pernr}) => pernr === obj1 ).checked = false;
-					
-					switch(obj1) {
-						  case f1Pernr:
-						    f1.setVisible(false);
-						    f1Pernr=0;
-						    f1Name="";
-						    calendarCounts--;
-						    break;
-						  case f2Pernr:
-						    f2.setVisible(false);
-						    f2Pernr=0;
-						    f2Name="";
-						    calendarCounts--;
-						    break;
-						  case f3Pernr:
-						  	f3.setVisible(false);
-						  	f3Pernr=0;
-						  	f3Name="";
-						  	calendarCounts--;
-					}
-
-
-					//MessageToast.show(obj1 + obj2 + " Pressed");
-					console.log(obj1 + obj2 + " Pressed");
-					console.log("else e girdi");
-						
-					}
-					}
-			}*/
 
 
 			console.log("handleChange event ended");
