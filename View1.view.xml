@@ -1,0 +1,713 @@
+<mvc:View controllerName="deneme.deneme.controller.View1"
+xmlns:mvc="sap.ui.core.mvc"
+xmlns:l="sap.ui.layout"
+xmlns:u="sap.ui.unified"
+
+	xmlns:unified="sap.ui.unified"
+	
+	xmlns:table="sap.ui.table"
+	
+	xmlns:main="sap.ui.webc.main"
+	
+	xmlns:dnd="sap.ui.core.dnd"
+	
+	xmlns:local="deneme.deneme.customControl"
+
+displayBlock="true"
+xmlns="sap.m">
+
+<!--	<Shell id="shell">-->
+
+
+		<App id="app" class="sapUiResponsiveMargin" width="auto">
+			<pages>
+				<Page id="page" showHeader="false">
+				<!--<Page id="page" title="{i18n>title}">-->	
+					<content>
+						
+						<l:HorizontalLayout>
+							<ToggleButton id="button1" text="" 						 icon="sap-icon://company-view" 	      press="onInsMenuMinimize"      tooltip="Prüferliste ein/ausblenden" class="sapUiTinyMarginEnd"/>
+							<ToggleButton id="button2" text="" 					  	 icon="sap-icon://resize-vertical"	      press="onAvominimize"   tooltip="AVO ein/ausblenden" class="sapUiTinyMarginEnd"/>
+							<ToggleButton id="button3" text=""							 icon="sap-icon://full-screen"		      press="onCalendarMaximize"  tooltip="Kalender Vollbildmodus ein/ausschalten" class="sapUiTinyMarginEnd"/>
+							<Button text="Meldung suchen"			 icon="sap-icon://inspection"			  press="onPressed"  class="sapUiTinyMarginEnd"/>
+							<Button text="Suche im Terminblocker"	 icon="sap-icon://check-availability"	  press="onPressed"  class="sapUiTinyMarginEnd"/>
+							<ToggleButton id="button8" text="Plantafel"	 icon="sap-icon://horizontal-bar-chart-2" press="btnPlanTafel"  class="sapUiTinyMarginEnd"/>
+							<Button text="Kalendarmodus"			 icon="sap-icon://calendar" 			  press="btnChangeOrientation"  class="sapUiTinyMarginEnd"/>
+							<Button text="Listmodus"				 icon="sap-icon://list" 				  press="btnChangeOrientation"  class="sapUiTinyMarginEnd"/>
+							<Button text="Einstellungen"			 icon="sap-icon://settings" 			  press="onSettings"  class="sapUiTinyMarginEnd"/>
+							<Button text="Prüferauswahl"			 icon="sap-icon://employee-lookup"		  press="onSelectInspectors"  class="sapUiTinyMarginEnd"/>
+							<Button text="Protokolle suchen"		 icon="sap-icon://search"				  press="btnChangeOrientation"  class="sapUiTinyMarginEnd"/>
+							<Button text="Abbrechnen"														  press="onMainCancel"  class="sapUiTinyMarginEnd"/>
+							<Text
+								id="eventStatus"
+								text=""
+								class="sapUiTinyMarginTop sapUiTinyMarginBegin" />
+						</l:HorizontalLayout>
+	
+	
+						<l:Splitter
+								id="mainSplitter"
+								height="90%"
+								width="100%">
+							
+							<l:layoutData>
+								<l:SplitterLayoutData size="100%" />
+							</l:layoutData>
+							
+							
+						<VBox>
+							<l:VerticalLayout>
+								<u:Calendar 
+								id="calendar"
+								select="handleCalendarSelect" class='vbox1'/>
+									<l:HorizontalLayout>
+									<Button
+									icon="sap-icon://calendar"
+									press="handleSelectToday"
+									text="Heute" />
+									<Button
+									icon="sap-icon://calendar"
+									press="handleSelectToday"
+									text="aktuelle Woche" />
+									<Button
+									icon="sap-icon://calendar"
+									press="handleSelectToday"
+									text="aktueller Monat" />
+									</l:HorizontalLayout>
+<!--								<l:HorizontalLayout>
+									<Label
+									text="Selected Date (yyyy-mm-dd):"
+									class="labelMarginLeft" />
+									<Text
+									id="selectedDate"
+									text="No Date Selected"
+									class="labelMarginLeft"/>
+								</l:HorizontalLayout>-->
+							</l:VerticalLayout>
+									
+
+							<l:VerticalLayout>
+
+								<VBox>
+
+								<table:Table
+													id="table"
+													rows="{path: '/Inspectors', events: { change: '.onBindingChange' } }"
+													selectionMode="MultiToggle"
+													visibleRowCount="8"
+													width="23rem"
+													alternateRowColors="true"
+									fixedColumnCount="0"
+									fixedRowCount="0"
+									minAutoRowCount="5"
+									fixedBottomRowCount="0"
+									rowSelectionChange="handleChangeInspektor"
+									enableSelectAll="false"
+									title="Inspektors"
+													ariaLabelledBy="title">
+												<table:rowSettingsTemplate>
+													<table:RowSettings highlight="{Status}" highlightText="{StatusText}"/>
+												</table:rowSettingsTemplate>
+												<table:columns>
+													<table:Column sortProperty="Pernr" width="30%" filterProperty="Pernr">
+														<Label text="Prüfer"/>
+														<table:template>
+															<Text text="{Pernr}" wrapping="false"/>
+														</table:template>
+													</table:Column>
+													<table:Column>
+														<Label text="Vollständiger Name"/>
+														<table:template>
+															<Text text="{Firstname} {Lastname}" wrapping="false"/>
+														</table:template>
+													</table:Column>
+												</table:columns>
+								</table:Table>
+								</VBox>
+
+
+									
+							</l:VerticalLayout>		
+									
+						</VBox>
+
+						
+
+						<l:Splitter orientation="Vertical" resize=".onInnerContainerResize">
+							<l:layoutData>
+								<l:SplitterLayoutData id="insLayout" size="82%" />
+							</l:layoutData>
+							<l:contentAreas>
+								
+							
+									<VBox class="sapUiSmallMargin">
+									
+					
+
+											
+																						
+							<layoutData>
+								<l:SplitterLayoutData id="calenderSplitter" size="70%" />
+							</layoutData>
+												<PlanningCalendar
+												id="PC1"
+												startDate="{path: '/startDate' }"
+												rows="{path: '/people'}"
+												appointmentsVisualization="Filled">
+												<rows>
+														<PlanningCalendarRow
+																icon="{pic}"
+																title="{Firstname} {Lastname}"
+																text="{role}"
+																enableAppointmentsDragAndDrop="{path:'name', formatter:'.canModifyAppointments'}"
+																enableAppointmentsResize="{path:'name', formatter:'.canModifyAppointments'}"
+																enableAppointmentsCreate="{path:'name', formatter:'.canModifyAppointments'}"
+																appointmentDrop="handleAppointmentDrop"
+																appointmentDragEnter="handleAppointmentDragEnter"
+																appointmentResize="handleAppointmentResize"
+																appointmentCreate="handleAppointmentCreate"
+																appointments="{path : 'appointments', templateShareable: false}">
+															<appointments>
+																<unified:CalendarAppointment
+																		startDate="{start}"
+																		endDate="{end}"
+																		icon="{pic}"
+																		title="{title}"
+																		text="{info}"
+																		type="{type}"
+																		tentative="{tentative}">
+																</unified:CalendarAppointment>
+															</appointments>
+														</PlanningCalendarRow>
+													</rows>
+												</PlanningCalendar>
+												
+										<l:BlockLayout id="BlockLayout" background="{/selectedBackground}">
+										<l:content>	
+											<!--/scroll is not good scrollable="true"/-->
+										<l:BlockLayoutRow id="alan1"> 
+											<l:BlockLayoutCell id="field1" class="sapUiNoContentPadding">
+												<VBox class="sapUiTinyMargin">
+
+<!--														<local:CustomCalendar
+															id="SPC1"
+																	class="sapUiTinyMarginTop"
+																	title="My Title"
+																	startHour="8"
+																	endHour="20"
+																	fullDay="false"
+																	enableAppointmentsDragAndDrop="true"
+																	enableAppointmentsResize="true"
+																	enableAppointmentsCreate="true"
+																	appointmentDrop="handleAppointmentDrop"
+																	appointmentResize="handleAppointmentResize"
+																	appointmentCreate="handleAppointmentCreate"
+																	viewChange="handleViewChange"
+																	headerDateSelect="handleHeaderDateSelect"
+																	startDateChange="handleStartDateChange"
+																	startDate="{path: '/startDate'}"
+																	appointments="{path: '/appointments'}">
+															<local:actions>
+																		<ToggleButton text="Full Day" press="toggleFullDay" tooltip="Show Full Day" />
+																		<Button id="addNewAppointment12" text="Prüftermin anlegen" icon="sap-icon://create-form" press="handleAppointmentCreate" tooltip="Add new appointment" />
+																		<Button id="addNewAppointment13" text="Termin anlegen" icon="sap-icon://document" press="handleAppointmentCreate" tooltip="Add new appointment" />
+																		<Button id="deleteAppointment1"  text="Löschen" icon="sap-icon://delete" press="handleAppointmentDelete" tooltip="Delete appointment" />
+															</local:actions>
+															<local:views>
+																		<SinglePlanningCalendarDayView key="DayView" title="Day" />
+																		<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+																		<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+																		<SinglePlanningCalendarMonthView key="MonthView" title="Month" />
+															</local:views>
+															<local:appointments>
+																		<unified:CalendarAppointment
+																			title= "{title}"
+																			text= "{info}"
+																			type= "{type}"
+																			icon= "{icon}"
+																			startDate= "{start}"
+																			endDate= "{end}">
+																		</unified:CalendarAppointment>
+															</local:appointments>
+															
+														    <local:dragDropConfig>
+															<dnd:DropInfo
+																drop="onDropTable1"
+															groupName="createAppointment"/>
+															</local:dragDropConfig>
+															
+															
+															
+														</local:CustomCalendar>-->
+														
+														<local:CustomSingleCalendar
+															id="SPC1"
+																	class="sapUiTinyMarginTop"
+																	title="My Title"
+																	startHour="08"
+																	endHour="20"
+																	fullDay="false"
+																	enableAppointmentsDragAndDrop="true"
+																	enableAppointmentsResize="true"
+																	enableAppointmentsCreate="true"
+																	appointmentDrop="handleAppointmentDrop"
+																	appointmentResize="handleAppointmentResize"
+																	appointmentCreate="handleAppointmentCreate"
+																	viewChange="handleViewChange"
+																	headerDateSelect="handleHeaderDateSelect"
+																	startDateChange="handleStartDateChange"
+																	startDate="{path: '/startDate'}"
+																	appointments="{path: '/appointments'}">
+															<local:actions>
+																		<ToggleButton text="Full Day" press="toggleFullDay" tooltip="Show Full Day" />
+																		<Button id="addNewAppointment12" text="Prüftermin anlegen" icon="sap-icon://create-form" press="handleAppointmentCreate" tooltip="Add new appointment" />
+																		<Button id="addNewAppointment13" text="Termin anlegen" icon="sap-icon://document" press="handleAppointmentCreate" tooltip="Add new appointment" />
+																		<Button id="deleteAppointment1"  text="Löschen" icon="sap-icon://delete" press="handleAppointmentDelete" tooltip="Delete appointment" />
+															</local:actions>
+															<local:views>
+																		<SinglePlanningCalendarDayView key="DayView" title="Day" />
+																		<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+																		<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+																		<SinglePlanningCalendarMonthView key="MonthView" title="Month" />
+															</local:views>
+															<local:appointments>
+																		<unified:CalendarAppointment
+																			title= "{title}"
+																			text= "{info}"
+																			type= "{type}"
+																			icon= "{icon}"
+																			startDate= "{start}"
+																			endDate= "{end}">
+																		</unified:CalendarAppointment>
+															</local:appointments>
+															
+														    <local:dragDropConfig>
+															<dnd:DropInfo
+																drop="onDropTable1"
+															groupName="createAppointment"/>
+															</local:dragDropConfig>
+															
+															
+															
+														</local:CustomSingleCalendar>
+														
+														
+														
+														
+														
+																
+																
+																
+													</VBox>
+											</l:BlockLayoutCell>
+											<l:BlockLayoutCell
+													id="field2"
+													class="sapUiNoContentPadding">
+													<VBox class="sapUiTinyMargin">
+																<local:CustomSingleCalendar
+																	id="SPC2"
+																	class="sapUiTinyMarginTop"
+																	title="My Title"
+																	startHour="8"
+																	endHour="20"
+																	fullDay="false"
+																	enableAppointmentsDragAndDrop="true"
+																	appointmentDrop="handleAppointmentDrop"
+																	appointmentResize="handleAppointmentResize"
+																	appointmentCreate="handleAppointmentCreate"
+																	viewChange="handleViewChange"
+																	headerDateSelect="handleHeaderDateSelect"
+																	startDateChange="handleStartDateChange"
+																	startDate="{path: '/startDate'}"
+																	appointments="{path: '/appointments'}">
+																	<local:actions>
+																		<ToggleButton text="Full Day" press="toggleFullDay" tooltip="Show Full Day" />
+																		<Button id="addNewAppointment22" text="Prüftermin anlegen" icon="sap-icon://create-form" press="handleAppointmentCreate" tooltip="Add new appointment" />
+																		<Button id="addNewAppointment23" text="Termin anlegen" icon="sap-icon://document" press="handleAppointmentCreate" tooltip="Add new appointment" />
+																		<Button id="deleteAppointment2"  text="Löschen" icon="sap-icon://delete" press="handleAppointmentDelete" tooltip="Delete appointment" />
+																	</local:actions>
+																	<local:views>
+																		<SinglePlanningCalendarDayView key="DayView" title="Day" />
+																		<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+																		<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+																		<SinglePlanningCalendarMonthView key="MonthView" title="Month" />
+																	</local:views>
+																	<local:appointments>
+																		<unified:CalendarAppointment
+																			title= "{title}"
+																			text= "{text}"
+																			type= "{type}"
+																			icon= "{icon}"
+																			startDate= "{start}"
+																			endDate= "{end}">
+																		</unified:CalendarAppointment>
+																	</local:appointments>
+																</local:CustomSingleCalendar>
+													</VBox>
+												
+											</l:BlockLayoutCell>
+											<l:BlockLayoutCell
+													id="field3"
+													class="sapUiNoContentPadding">
+														
+													<VBox class="sapUiTinyMargin">
+																<local:CustomSingleCalendar
+																	id="SPC3"
+																	class="sapUiTinyMarginTop"
+																	title="My Title"
+																	startHour="8"
+																	endHour="20"
+																	fullDay="false"
+																	enableAppointmentsDragAndDrop="true"
+																	appointmentDrop="handleAppointmentDrop"
+																	appointmentResize="handleAppointmentResize"
+																	appointmentCreate="handleAppointmentCreate"
+																	viewChange="handleViewChange"
+																	headerDateSelect="handleHeaderDateSelect"
+																	startDateChange="handleStartDateChange"
+																	startDate="{path: '/startDate'}"
+																	appointments="{path: '/appointments'}">
+																	<local:actions>
+																		<ToggleButton text="Full Day" press="toggleFullDay" tooltip="Show Full Day" />
+																		<Button id="addNewAppointment32" text="Prüftermin anlegen" icon="sap-icon://create-form" press="handleAppointmentCreate" tooltip="Add new appointment" />
+																		<Button id="addNewAppointment33" text="Termin anlegen" icon="sap-icon://document" press="handleAppointmentCreate" tooltip="Add new appointment" />
+																		<Button id="deleteAppointment3"  text="Löschen" icon="sap-icon://delete" press="handleAppointmentDelete" tooltip="Delete appointment" />
+																	</local:actions>
+																	<local:views>
+																		<SinglePlanningCalendarDayView key="DayView" title="Day" />
+																		<SinglePlanningCalendarWorkWeekView key="WorkWeekView" title="Work Week" />
+																		<SinglePlanningCalendarWeekView key="WeekView" title="Week" />
+																		<SinglePlanningCalendarMonthView key="MonthView" title="Month" />
+																	</local:views>
+																	<local:appointments>
+																		<unified:CalendarAppointment
+																			title= "{title}"
+																			text= "{text}"
+																			type= "{type}"
+																			icon= "{icon}"
+																			startDate= "{start}"
+																			endDate= "{end}">
+																		</unified:CalendarAppointment>
+																	</local:appointments>
+																</local:CustomSingleCalendar>
+													</VBox>
+														
+														
+														
+											</l:BlockLayoutCell>
+										</l:BlockLayoutRow>
+										</l:content>
+										</l:BlockLayout>
+
+										
+										
+										
+										
+									</VBox>
+								
+								
+								
+								
+									<VBox class="sapUiSmallMargin">
+										
+<!--										<l:HorizontalLayout>
+											
+											<Button text="" 						 icon="sap-icon://multiselect-all" 	      press="onSelectAll"      tooltip="Alles Markieren" class="sapUiTinyMarginEnd"/>
+											<Button text="" 					  	 icon="sap-icon://multiselect-none"	      press="clearSelection"		 tooltip="Alle Mark. Löschen" class="sapUiTinyMarginEnd"/>
+											<Button text=""							 icon="sap-icon://sort-ascending"		  press="onSort"				 tooltip="Sortieren Aufsteigen" class="sapUiTinyMarginEnd"/>
+											<Button text="" 						 icon="sap-icon://sort-descending" 	      press="btnAddContentArea"      tooltip="Sortieren Absteigend" class="sapUiTinyMarginEnd"/>
+											<Button text="" 					  	 icon="sap-icon://search"	    		  press="btnRemoveContentArea"   tooltip="Suche" class="sapUiTinyMarginEnd"/>
+											<Button text=""							 icon="sap-icon://refresh"		    	  press="btnInvalidateSplitter"  tooltip="Arbeitsvorrat Aktualisieren" class="sapUiTinyMarginEnd"/>
+											<Button text="" 						 icon="sap-icon://map-2" 	    		  press="btnAddContentArea"      tooltip="Route Anzeigen" class="sapUiTinyMarginEnd"/>
+											<Button text="" 					  	 icon="sap-icon://clinical-task-tracker"  press="btnRemoveContentArea"   tooltip="Listdarstellung" class="sapUiTinyMarginEnd"/>
+											<Button text=""							 icon="sap-icon://filter"		    	  press="btnInvalidateSplitter"  tooltip="Filter" class="sapUiTinyMarginEnd"/>
+											<Button text=""							 icon="sap-icon://SAP-icons-TNT/internal-block-diagram"	press="btnInvalidateSplitter"  tooltip="Reservierung" class="sapUiTinyMarginEnd"/>
+											<Button text=""							 icon="sap-icon://sys-cancel-2"		    	  press="btnInvalidateSplitter"  tooltip="Markierte Meldungen absagen" class="sapUiTinyMarginEnd"/>
+											<Button text="Umkreissuche"				 icon="sap-icon://map"		    	  press="btnInvalidateSplitter"  tooltip="Umkreissuche" class="sapUiTinyMarginEnd"/>
+											<Text
+												id="eventStatusasd"
+												text=""
+												class="sapUiTinyMarginTop sapUiTinyMarginBegin" />
+										</l:HorizontalLayout>-->
+										
+										
+										
+										
+										
+										<table:Table id="Table1" 
+										
+										rows="{path: '/Tasks', events: { change: '.onBindingChange2' }}"
+										columnSelect="onColumnSelect"
+										
+										
+										>
+											
+															<table:extension>
+					<OverflowToolbar style="Clear">
+						<Title id="title" text=""/>
+						<!--<ToolbarSpacer/>-->
+							<Button text="" 						 icon="sap-icon://multiselect-all" 	      press="onSelectAll"   		 tooltip="Alles Markieren" />
+							<Button text="" 					  	 icon="sap-icon://multiselect-none"	      press="clearSelection"		 tooltip="Alle Mark. Löschen" />
+							<Button text=""							 icon="sap-icon://sort-ascending"		  press="onSort1"				 tooltip="Sortieren Aufsteigen" />
+							<Button text="" 						 icon="sap-icon://sort-descending" 	      press="onSort1"   			 tooltip="Sortieren Absteigend" />
+							<Button text="" 					  	 icon="sap-icon://search"	    		  press="onAVOSearch"   		 tooltip="Suche" />
+							<Button text=""							 icon="sap-icon://refresh"		    	  press="onRefreshTableAVO" 	 tooltip="Arbeitsvorrat Aktualisieren" />
+							<Button text="" 						 icon="sap-icon://map-2" 	    		  press="onRoute"   			 tooltip="Route Anzeigen" />
+							<Button text="" 					  	 icon="sap-icon://clinical-task-tracker"  press="onListViewAVO" 		 tooltip="Listdarstellung" />
+							<Button text=""							 icon="sap-icon://SAP-icons-TNT/internal-block-diagram"	press="onBook1"  tooltip="Reservierung" />
+							<Button text=""							 icon="sap-icon://sys-cancel-2"		      press="openPopUpCancelTask"    tooltip="Markierte Meldungen absagen" />
+							<Button text="Umkreissuche"				 icon="sap-icon://map"		    		  press="onRegionSearch"		 tooltip="Umkreissuche" />
+						
+						
+						
+						
+<!--						<Button
+							icon="sap-icon://sorting-ranking"
+							tooltip="Sort ascending across Categories and Name"
+							press="sortCategoriesAndName"/>
+						<Button
+							icon="sap-icon://sort"
+							tooltip="Sort Categories in addition to current sorting"
+							press="sortCategories"/>
+						<Button
+							icon="sap-icon://decline"
+							tooltip="Clear all sortings"
+							press="clearAllSortings"/>-->
+					</OverflowToolbar>
+				</table:extension>
+											
+											
+											
+											
+								            <table:columns>
+								                        <table:Column id="Meldungen" sortProperty="Meldungen" filterProperty="Meldungen" width="8rem">
+								                                  <Label text="Service Pos."/>
+								                                        <table:template><Text text="{Meldungen}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Beschreibung" sortProperty="Beschreibung" filterProperty="Beschreibung" width="130px">
+								                                  <Label text="Beschreibung"/>
+								                                        <table:template><Text text="{Beschreibung}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Langtext" sortProperty="Langtext" filterProperty="Langtext" width="100px">
+								                                  <Label text="Langtext"/>
+								                                        <table:template><Text text="{Langtext}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Equipment" sortProperty="Equipment" filterProperty="Equipment" width="10rem">
+								                                  <Label text="Equipment"/>
+								                                        <table:template><Text text="{Equipment}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="EquipmentBezeichnung" sortProperty="EquipmentBezeichnung" filterProperty="EquipmentBezeichnung" width="180px">
+								                                  <Label text="Equipment Bezeichnung"/>
+								                                        <table:template><Text text="{EquipmentBezeichnung}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Objectart" sortProperty="Objectart" filterProperty="Objectart" width="100px">
+								                                  <Label text="Objectart"/>
+								                                        <table:template><Text text="{Objectart}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Material" sortProperty="Material" filterProperty="7" width="100px">
+								                                  <Label text="Material"/>
+								                                        <table:template><Text text="{Material}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="MaterialBezeichnung" sortProperty="MaterialBezeichnung" filterProperty="8" width="150px">
+								                                  <Label text="Material Bezeichnung"/>
+								                                        <table:template><Text text="{MaterialBezeichnung}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Meldungsstatus" sortProperty="Meldungsstatus" filterProperty="Meldungsstatus" width="120px">
+								                                  <Label text="Meldungsstatus"/>
+								                                        <table:template><Text text="{Meldungsstatus}" ></Text></table:template>
+								                        </table:Column>
+<!--								                        <table:Column id="Absagegrund" sortProperty="Absagegrund" filterProperty="10" width="100px">
+								                                  <Label text="Absagegrund"/>
+								                                        <table:template><Text text="{Absagegrund}" ></Text></table:template>
+								                        </table:Column>-->
+								                        <table:Column id="ExtraTime" sortProperty="ExtraTime" filterProperty="11" width="100px">
+								                                  <Label text="ExtraTime"/>
+								                                        <table:template><Text text="{ExtraTime}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Std.Time" sortProperty="Std.Time" filterProperty="Std.Time"  width="100px">
+								                                  <Label text="Std.Time"/>
+								                                        <table:template><Text text="{Std.Time}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Vormerkung" sortProperty="Vormerkung" filterProperty="Vormerkung"  width="100px">
+								                                  <Label text="Vormerkung"/>
+								                                        <table:template>
+								                                        	<main:Icon
+																			class="sapUiMediumMarginBegin"
+																			name="{Vormerkung}"
+																			click="onBook2" />
+								                                        	
+								                                        </table:template>
+								                                        <!--<table:template><Text text="{Vormerkung}" ></Text></table:template>-->
+								                        </table:Column>
+								                        <table:Column id="Vorgemerkt" sortProperty="Vorgemerkt" filterProperty="Vorgemerkt"  width="100px">
+								                                  <Label text="Vorgemerkt"/>
+								                                        <table:template><Text text="{Vorgemerkt}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="123456" sortProperty="Fälligkeitsdatum" filterProperty="Fälligkeitsdatum"  width="130px">
+								                                  <Label text="Fälligkeitsdatum"/>
+								                                        <table:template><Text text="{Fälligkeitsdatum}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Auftraggeber" sortProperty="Auftraggeber" filterProperty="Auftraggeber"  width="100px">
+								                                  <Label text="Auftraggeber"/>
+								                                        <table:template><Text text="{Auftraggeber}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="122334455" sortProperty="Name(AG)" filterProperty="Name(AG)"  width="100px">
+								                                  <Label text="Name(AG)"/>
+								                                        <table:template><Text text="{Name(AG)}" ></Text></table:template>
+								                        </table:Column>
+								                         <table:Column id="1345123" sortProperty="Ort(AG)" filterProperty="Ort(AG)"  width="100px">
+								                                  <Label text="Ort(AG)"/>
+								                                        <table:template><Text text="{Ort(AG)}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="15462333" sortProperty="Ortsteil(AG)" filterProperty="Ortsteil(AG)"  width="100px">
+								                                  <Label text="Ortsteil(AG)"/>
+								                                        <table:template><Text text="{Ortsteil(AG)}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="234123" sortProperty="PLZ(AG)" filterProperty="PLZ(AG)"  width="100px">
+								                                  <Label text="PLZ(AG)"/>
+								                                        <table:template><Text text="{PLZ(AG)}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="4523123" sortProperty="Straße(AG)" filterProperty="Straße(AG)"  width="100px">
+								                                  <Label text="Straße(AG)"/>
+								                                        <table:template><Text text="{Straße(AG)}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="22" sortProperty="22" filterProperty="22"  width="100px">
+								                                  <Label text="Haus-Nr.(AG)"/>
+								                                        <table:template><Text text="{Haus-Nr.(AG)}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="23" sortProperty="23" filterProperty="23"  width="100px">
+								                                  <Label text="Prüfort Name"/>
+								                                        <table:template><Text text="{PrüfortName}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="24" sortProperty="24" filterProperty="24"  width="100px">
+								                                  <Label text="Prüfort Name 2"/>
+								                                        <table:template><Text text="{PrüfortName2}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="25" sortProperty="25" filterProperty="25"  width="100px">
+								                                  <Label text="Prüfort Land"/>
+								                                        <table:template><Text text="{PrüfortLand}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="26" sortProperty="26" filterProperty="26"  width="100px">
+								                                  <Label text="Prüfort Ort"/>
+								                                        <table:template><Text text="{PrüfortOrt}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="27" sortProperty="27" filterProperty="27"  width="130px">
+								                                  <Label text="Prüfort Ortsteil"/>
+								                                        <table:template><Text text="{PrüfortOrtsteil}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="28" sortProperty="28" filterProperty="28" width="100px">
+								                                  <Label text="Prüfort PLZ"/>
+								                                        <table:template><Text text="{PrüfortPLZ}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="29" sortProperty="29" filterProperty="29" width="130px">
+								                                  <Label text="Prüfort Straße"/>
+								                                        <table:template><Text text="{PrüfortStraße}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="30" sortProperty="30" filterProperty="30" width="130px">
+								                                  <Label text="Prüfort Hausnummer"/>
+								                                        <table:template><Text text="{PrüfortHausnummer}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="31" sortProperty="31" filterProperty="31" width="100px">
+								                                  <Label text="X-Wert"/>
+								                                        <table:template><Text text="{X-Wert}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="32" sortProperty="32" filterProperty="32" width="100px">
+								                                  <Label text="Y-Wert"/>
+								                                        <table:template><Text text="{Y-Wert}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="33" sortProperty="33" filterProperty="33" width="100px">
+								                                  <Label text="Betrieb.ID"/>
+								                                        <table:template><Text text="{Betrieb.ID}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Herst.ID" sortProperty="Herst.ID" filterProperty="Herst.ID" width="100px">
+								                                  <Label text="Herst.ID"/>
+								                                        <table:template><Text text="{Herst.ID}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="Hersteller" sortProperty="Hersteller" filterProperty="Hersteller" width="100px">
+								                                  <Label text="Hersteller"/>
+								                                        <table:template><Text text="{Hersteller}" ></Text></table:template>
+								                        </table:Column>
+								                        <table:Column id="HerstellerText" sortProperty="HerstellerText" filterProperty="HerstellerText"  width="130px">
+								                        		<Label text="Hersteller Text"/>
+								                                        <table:template><Text text="{HerstellerText}" ></Text></table:template>
+								                        </table:Column>
+	
+								            </table:columns>
+											<table:dragDropConfig>
+												<dnd:DragInfo 
+													sourceAggregation="rows"
+													dragStart="onDragStart"
+													groupName="createAppointment"
+													/>
+												<dnd:DropInfo
+													targetAggregation="appointments"
+													groupName="createAppointment"
+													drop="onDropTable1" />
+												
+												
+<!--												<dnd:DragInfo
+												groupName="moveToTable1"
+												sourceAggregation="rows"
+												dragStart="onDragStart" />
+												<dnd:DropInfo
+												groupName="moveToTable1"
+												targetAggregation="appointments"
+												dragEnter="onDropTable2"
+												dragOver="onDropTable2"
+												dropEffect="Move"
+												dropPosition="On"
+												drop="onDropTable2" />-->
+											</table:dragDropConfig>
+								            
+
+								            
+								            
+								            
+								            
+<!--								            <table:dragDropConfig>
+												<dnd:DragInfo
+													groupName="moveToTable2"
+													sourceAggregation="rows"
+													dragStart="onDragStart" />
+												<dnd:DropInfo
+													groupName="moveToTable1"
+													drop="onDropTable1" />
+											</table:dragDropConfig>-->
+											
+											
+											
+										</table:Table>
+			
+								
+								
+																						
+							<layoutData>
+								<l:SplitterLayoutData id="avoSplitter" size="30%" />
+							</layoutData>
+	
+									</VBox>
+								
+								
+
+
+								
+								
+							</l:contentAreas>
+						</l:Splitter>
+
+								
+
+						</l:Splitter>
+	
+
+						
+						
+						
+						
+						
+					</content>
+				</Page>
+			</pages>
+		</App>
+	<!--</Shell>-->
+</mvc:View>
